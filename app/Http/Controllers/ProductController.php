@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\image;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -26,7 +27,7 @@ class ProductController extends Controller
      }
      Product::create($product);
      Alert::success('محصول موفقانه ثبت شد');
-     return redirect()->route('Acount.product.ProductList');
+     return redirect()->route('Admin.product.productList');
     }
 
     public function productList(){
@@ -76,6 +77,49 @@ public function productdelete($id){
     Alert::success('محصول موفقانه حذف شد');
     return redirect()->route('Acount.Product.ProductList');
 }
+
+
+//images
+
+public function ProductAddPicture($id){
+ return view('Admin.Product.ProductAddPicture',compact('id'));
+
+}
+
+public function storeProductimage(Request $request ,$id){
+ $image=new image();
+ $newimageName=time().'.'.$request->image->extension();
+ $request->image->move(public_path("adminAssest/Productimage"),$newimageName);
+ 
+ $image->image=$newimageName;
+ $image->product_id=$id;
+ $image->save();
+ Alert::success('عکس محصول موفقانه ثبت شد');
+ return redirect()->route('Acount.Product.ProductList');
+
+}
+
+public function ProductImageList(){
+    $images=image::all();
+    return view('Admin.Product.ProductImageList',compact('images'));
+
+
+}
+
+public function ProductimageDelete($id){
+ $image=image::find($id);
+
+ $picture="adminAssest/Productimage/".$image->image;
+ if(File::exists($picture)){
+    File::delete($picture);
+
+ } 
+ 
+ $image->delete();
+ Alert::success('عکس محصول موفقانه حذف شد');
+ return redirect()->route('Acount.Product.ProductImageList');
+}
+
 
 }
 
