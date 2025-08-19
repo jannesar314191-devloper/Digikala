@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\ColorProduct;
 use App\Models\image;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -121,5 +122,32 @@ public function ProductimageDelete($id){
 }
 
 
+//Color
+
+public function ProductAddColor($id){
+
+    return view('Admin.Product.ProductAddColor',compact('id'));
+}
+
+public function StoreProductColor(Request $request,$id){
+$color=$request->all();
+$color['product_id']=$id;
+ColorProduct::create($color);
+Alert::success('رنگ محصول موفقانه ثبت شد');
+return redirect()->route('Acount.Product.ProductColorList');
+
+}
+
+public function ProductColorList(){
+    $colors=ColorProduct::all();
+    return view('Admin.Product.ProductColorList',compact('colors'));
+}
+
+public function ProductColorDelete($id){
+ $colors=ColorProduct::find($id);
+ $colors->delete();
+ Alert::success('رنگ محصول موفقانه حذف شد');
+return redirect()->route('Acount.Product.ProductColorList');
+}
 }
 
